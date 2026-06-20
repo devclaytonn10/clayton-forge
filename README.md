@@ -12,7 +12,7 @@
   </p>
   <p align="center">
     <img src="https://img.shields.io/badge/license-MIT-blue.svg" />
-    <img src="https://img.shields.io/badge/status-fase%201%20completa-green" />
+    <img src="https://img.shields.io/npm/v/clayton-forge.svg" />
     <img src="https://img.shields.io/badge/LLM-agnostic-orange" />
     <img src="https://img.shields.io/badge/MCP-compatible-purple" />
   </p>
@@ -32,20 +32,15 @@ It's now evolving into a **complete platform**: CLI, MCP Server, and Web UI — 
 
 ## ⚡ Quick Start
 
-### CLI (Fase 1 — available now)
+### Installation
 
 ```bash
-# Clone and install
-git clone https://github.com/devclaytonn10/clayton-forge
-cd clayton-forge
-npm install
-npm run build --workspaces
-
-# Create your first agent
-node packages/cli/dist/index.js new
-
-# Or when published to npm:
 npm install -g clayton-forge
+```
+
+### Create your first agent
+
+```bash
 cforge new
 ```
 
@@ -258,6 +253,17 @@ clayton-forge/
 
 ---
 
+## Contributing
+
+1. Fork the repository
+2. Clone your fork
+3. Install dependencies: `npm install`
+4. Build: `npm run build --workspaces`
+5. Make your changes
+6. Submit a pull request
+
+---
+
 ## License
 
 MIT — use freely, contribute back if you can.
@@ -265,5 +271,7 @@ MIT — use freely, contribute back if you can.
 ---
 
 <p align="center">
-  Built by <a href="https://github.com/devclaytonn10">devclaytonn10</a>
+  Built by <a href="https://github.com/devclaytonn10">devclaytonn10</a> ·
+  <a href="https://www.npmjs.com/package/clayton-forge">npm</a> ·
+  <a href="https://github.com/devclaytonn10/clayton-forge">GitHub</a>
 </p>
