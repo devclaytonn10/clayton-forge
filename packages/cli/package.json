@@ -1,0 +1,26 @@
+{
+  "name": "clayton-forge",
+  "version": "0.1.0",
+  "description": "Clayton Forge CLI — build AI agents with confidence",
+  "main": "dist/index.js",
+  "bin": {
+    "cforge": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@clayton-forge/core": "*",
+    "chalk": "^4.1.2",
+    "commander": "^12.1.0",
+    "inquirer": "^8.2.7",
+    "ora": "^5.4.1"
+  },
+  "devDependencies": {
+    "@types/inquirer": "^8.2.13",
+    "@types/node": "^20.14.0",
+    "typescript": "^5.4.5"
+  }
+}
