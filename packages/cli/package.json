@@ -1,6 +1,6 @@
 {
   "name": "clayton-forge",
-  "version": "0.1.6",
+  "version": "0.1.8",
   "description": "Clayton Forge CLI — build AI agents with confidence",
   "main": "dist/index.js",
   "bin": {
