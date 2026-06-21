@@ -1,24 +1,27 @@
 {
-  "name": "@clayton-forge/core",
-  "version": "0.1.0",
+  "name": "clayton-forge-core",
+  "version": "0.1.2",
   "description": "Core engine for Clayton Forge — schema, adapters, executor",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "files": [
+    "dist/"
+  ],
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "js-yaml": "^4.1.0",
-    "zod": "^3.23.8",
     "@anthropic-ai/sdk": "^0.24.3",
+    "js-yaml": "^4.1.0",
+    "ollama": "^0.5.6",
     "openai": "^4.52.7",
-    "ollama": "^0.5.6"
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^20.14.0",
-    "typescript": "^5.4.5"
+    "typescript": "^5.9.3"
   }
 }
