@@ -1,0 +1,41 @@
+{
+  "name": "clayton-forge-mcp",
+  "version": "0.1.1",
+  "description": "MCP Server for Clayton Forge — use AI agents from any MCP client",
+  "main": "dist/index.js",
+  "bin": {
+    "clayton-forge-mcp": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "node dist/index.js",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "mcp",
+    "ai-agents",
+    "claude",
+    "cursor",
+    "windsurf",
+    "clayton-forge"
+  ],
+  "author": "devclaytonn10",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "@types/js-yaml": "^4.0.9",
+    "clayton-forge-core": "^0.1.0",
+    "js-yaml": "^5.0.0",
+    "zod": "^3.22.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^20.0.0",
+    "express": "^5.2.1",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
