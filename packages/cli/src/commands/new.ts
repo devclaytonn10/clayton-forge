@@ -3,6 +3,7 @@ import * as fs from "fs";
 import * as path from "path";
 import chalk from "chalk";
 import ora from "ora";
+import { execSync } from "child_process";
 
 // ─────────────────────────────────────────────
 // Tipos locais (para evitar import circular durante build inicial)
@@ -14,6 +15,8 @@ interface WizardAnswers {
   type: string;
   llm_provider: string;
   llm_model: string;
+  api_key_method: string;
+  api_key_value: string;
   output_format: string;
   trust_level: number;
 }
@@ -96,6 +99,28 @@ export async function commandNew(targetDir?: string): Promise<void> {
     },
     {
       type: "list",
+      name: "api_key_method",
+      message: chalk.white("How do you want to authenticate?"),
+      when: (a: WizardAnswers) => a.llm_provider === "anthropic" || a.llm_provider === "openai",
+      choices: (a: WizardAnswers) => {
+        const envVar = a.llm_provider === "anthropic" ? "ANTHROPIC_API_KEY" : "OPENAI_API_KEY";
+        return [
+          { name: `env var        — use $${envVar} (already set in your environment)`, value: "env" },
+          { name: "paste key      — type or paste your API key now", value: "paste" },
+          { name: "browser login  — open claude.ai to generate a key automatically", value: "browser" },
+        ];
+      },
+    },
+    {
+      type: "password",
+      name: "api_key_value",
+      message: chalk.white("Paste your API key:"),
+      mask: "*",
+      when: (a: WizardAnswers) => a.api_key_method === "paste",
+      validate: (v: string) => v.trim().length > 10 || "Key seems too short",
+    },
+    {
+      type: "list",
       name: "output_format",
       message: chalk.white("Output format:"),
       choices: [
@@ -116,6 +141,37 @@ export async function commandNew(targetDir?: string): Promise<void> {
       ],
     },
   ]);
+
+  // Browser login flow
+  if (answers.api_key_method === "browser") {
+    const url = answers.llm_provider === "anthropic"
+      ? "https://console.anthropic.com/settings/keys"
+      : "https://platform.openai.com/api-keys";
+
+    console.log("");
+    console.log(chalk.cyan("  Opening your browser to generate an API key..."));
+    console.log(chalk.gray(`  URL: ${url}`));
+    console.log("");
+
+    try {
+      const openCmd = process.platform === "win32" ? `start ${url}`
+        : process.platform === "darwin" ? `open ${url}`
+        : `xdg-open ${url}`;
+      execSync(openCmd);
+    } catch {
+      console.log(chalk.yellow("  Could not open browser automatically. Please open the URL above manually."));
+    }
+
+    const { key } = await inquirer.prompt<{ key: string }>([{
+      type: "password",
+      name: "key",
+      message: chalk.white("Paste the key you just created:"),
+      mask: "*",
+      validate: (v: string) => v.trim().length > 10 || "Key seems too short",
+    }]);
+    answers.api_key_value = key;
+    answers.api_key_method = "paste"; // treat as paste from here on
+  }
 
   // Destino
   const projectName = answers.name;
@@ -146,8 +202,8 @@ export async function commandNew(targetDir?: string): Promise<void> {
     const readme = buildReadme(answers);
     fs.writeFileSync(path.join(dest, "README.md"), readme);
 
-    // Gerar .env.example
-    if (apiKeyVar) {
+    // Gerar .env.example apenas se usar env var
+    if (apiKeyVar && answers.api_key_method !== "paste") {
       fs.writeFileSync(path.join(dest, ".env.example"), `${apiKeyVar}=your-api-key-here\n`);
     }
 
@@ -163,7 +219,9 @@ export async function commandNew(targetDir?: string): Promise<void> {
     console.log("");
     console.log(chalk.bold.cyan("  Next steps:"));
     console.log(chalk.white(`  $ cd ${projectName}`));
-    if (apiKeyVar) console.log(chalk.white(`  $ cp .env.example .env   # add your API key`));
+    if (apiKeyVar && answers.api_key_method !== "paste") {
+      console.log(chalk.white(`  $ cp .env.example .env   # add your API key`));
+    }
     console.log(chalk.white(`  $ cforge run              # execute the agent`));
     console.log(chalk.white(`  $ cforge test             # run tests`));
     console.log("");
@@ -200,9 +258,15 @@ function buildAgentYaml(answers: WizardAnswers, apiKeyVar: string | null): strin
 
   if (answers.llm_provider !== "none") {
     lines.push(`  model: ${answers.llm_model}`);
-    if (apiKeyVar) {
+
+    if (answers.api_key_method === "paste" && answers.api_key_value?.trim()) {
+      // Key colada diretamente — salva no yaml
+      lines.push(`  api_key: "${answers.api_key_value.trim()}"`);
+    } else if (apiKeyVar) {
+      // Usa env var
       lines.push(`  api_key: "\${${apiKeyVar}}"`);
     }
+
     lines.push(`  temperature: 0.1`);
     lines.push(`  max_tokens: 1000`);
   }
